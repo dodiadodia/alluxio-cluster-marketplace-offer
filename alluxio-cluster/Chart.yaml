@@ -1,0 +1,7 @@
+apiVersion: v2
+name: alluxio-cluster-azure-bundle
+description: Alluxio Enterprise Cluster deployed via Operator for Azure Marketplace
+type: application
+version: 1.0.0
+appVersion: "AI-3.7-13.0.29"
+

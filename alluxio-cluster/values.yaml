@@ -1,0 +1,80 @@
+# =======================================================================
+# Global image
+# =======================================================================
+global:
+  azure:
+    images:
+      enterprise:
+        tag: AI-3.7-13.0.29-rds
+        image: alluxio-enterprise
+        registry: alluxio.azurecr.cn/alluxio
+      etcd:
+        tag: 3.5.9-debian-11-r24
+        image: etcd
+        registry: alluxio.azurecr.cn/alluxio
+      osshell:
+        tag: 11-debian-11-r2
+        image: os-shell
+        registry: alluxio.azurecr.cn/alluxio
+      prometheus:
+        tag: v2.52.0
+        image: prometheus
+        registry: alluxio.azurecr.cn/alluxio
+      grafana:
+        tag: 11.1.0-ubuntu
+        image: grafana 
+        registry: alluxio.azurecr.cn/alluxio
+
+
+# ========================================================================
+# Alluxio Cluster Configuration (CR Instance)
+# ========================================================================
+cluster:
+  name: rds
+  # 部署到哪个 Namespace，默认跟随 Helm Release
+  #namespace: alluxio
+
+  image:
+    pullPolicy: IfNotPresent
+
+  # nodeSelector, alluxio.io/worker=enabled
+  label: enabled
+
+  # ----------------------------------------------------------------------
+  # 关键业务配置 (Marketplace UI 绑定重点)
+  # ----------------------------------------------------------------------
+  properties:
+
+  licenseString: "eyJsaWNlbnNlSWQiOiJhdXluMWh3aGZyaWY5dzMxIiwicHJvZHVjdGlvbklkIjoid2Q0cXdpcTQiLCJleHBpcmF0aW9uRGF0ZSI6IjIwMjYtMDItMTRUMDA6MDA6MDBaIiwiZ3JhY2VQZXJpb2REYXRlIjoiMjAyNi0wMi0xNFQwMDowMDowMFoiLCJsaWNlbnNlVmVyc2lvbiI6MSwic2VjcmV0IjoieGZlaUhNSVdrRDZHQkVyM0ZiZ1FMS0JacTZhdldyRUhnTzFqOXA2bU9yTWVrRkdCNDFSVzQ5RXAvR0RPZkFJTSIsImNvbnN0cmFpbnRzIjp7InBlclByb2Nlc3MiOnt9LCJyZWdpc3RyYXRpb24iOnt9fSwiYm91bmRDbHVzdGVyIjoiIiwiY2x1c3RlckxpY2Vuc2VzIjp7ImFsbHV4aW8tcmRzIjoiZXlKc2FXTmxibk5sU1dRaU9pSmhkWGx1TVdoM2FHWnlhV1k1ZHpNeElpd2ljSEp2WkhWamRHbHZia2xrSWpvaWQyUTBjWGRwY1RRaUxDSmxlSEJwY21GMGFXOXVSR0YwWlNJNklqSXdNall0TURJdE1UUlVNREE2TURBNk1EQmFJaXdpWjNKaFkyVlFaWEpwYjJSRVlYUmxJam9pTWpBeU5pMHdNaTB4TkZRd01Eb3dNRG93TUZvaUxDSnNhV05sYm5ObFZtVnljMmx2YmlJNk1Td2ljMlZqY21WMElqb2lRa3B5YTNvdmJIVnlPVkozTnpCUlRIaGpjVUk1ZURjd1NsbFRVRU4wU1ZOT2NrMDNPRzFNVUhocllVWnFRbXMwZFhaSE5VSXZPRkJuZUZCR1FsZ3ljU0lzSW1OdmJuTjBjbUZwYm5SeklqcDdJbkpsWjJsemRISmhkR2x2YmlJNmV5SnRZWGhVYjNSaGJGTjBiM0poWjJWRFlYQmhZMmwwZVVkaUlqb3hNREkwTURCOWZTd2lZbTkxYm1SRGJIVnpkR1Z5SWpvaUluMD0ifX0="
+
+  # ----------------------------------------------------------------------
+  # 规模与资源配置
+  # ----------------------------------------------------------------------
+  coordinator:
+    resources:
+      limits:
+        cpu: "8"
+        memory: "16Gi"
+      requests:
+        cpu: "2"
+        memory: "4Gi"
+    jvmOptions:
+      - -Xmx8g
+      - -Xms4g
+      - -XX:MaxDirectMemorySize=8g
+
+  worker:
+    pagestorePath: /mnt/alluxio/pagestore/data
+    pagestoreSize: 10Gi
+    count: 3
+    resources:
+      limits:
+        cpu: "10"
+        memory: "24Gi"
+      requests:
+        cpu: "2"
+        memory: "4Gi"
+    jvmOptions:
+      - -Xmx16g
+      - -Xms4g
+      - -XX:MaxDirectMemorySize=8g

@@ -1,0 +1,119 @@
+apiVersion: k8s-operator.alluxio.com/v1
+kind: AlluxioCluster
+metadata:
+  name: {{ .Values.cluster.name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  image: {{ .Values.global.azure.images.enterprise.registry }}/{{ .Values.global.azure.images.enterprise.image }}
+  imageTag: {{ .Values.global.azure.images.enterprise.tag }}
+  
+  properties:
+    # --- 核心动态参数 ---
+    
+    # --- 固定/默认参数 (如需配置可进一步提取到 values.yaml) ---
+
+  user: 0
+  group: 0
+  fsGroup: 0
+  hostNetwork: true
+
+  prometheus:
+    nodeSelector:
+      alluxio.io/worker: {{ .Values.cluster.label }}
+    tolerations:
+      - operator: Exists
+    image: {{ .Values.global.azure.images.prometheus.registry }}/{{ .Values.global.azure.images.prometheus.image }}
+    imageTag: {{ .Values.global.azure.images.prometheus.tag }}
+  
+  grafana:
+    nodeSelector:
+      alluxio.io/worker: {{ .Values.cluster.label }}
+    tolerations:
+      - operator: Exists
+    ports:
+      web: 3000
+      hostPort: 3000
+    image: {{ .Values.global.azure.images.grafana.registry }}/{{ .Values.global.azure.images.grafana.image }}
+    imageTag: {{ .Values.global.azure.images.grafana.tag }}
+
+  etcd:
+    nodeSelector:
+      alluxio.io/worker: {{ .Values.cluster.label }}
+    tolerations:
+      - operator: Exists
+    replicaCount: 1
+    image:
+      registry: {{ .Values.global.azure.images.etcd.registry }}
+      repository: {{ .Values.global.azure.images.etcd.image }}
+      tag: {{ .Values.global.azure.images.etcd.tag }}
+    volumePermissions:
+      image:
+        registry: {{ .Values.global.azure.images.osshell.registry }}
+        repository: {{ .Values.global.azure.images.osshell.image }}
+        tag: {{ .Values.global.azure.images.osshell.tag }}
+    persistence:
+      enabled: false
+      storageClass: openebs-hostpath
+      size: 50Gi
+
+  coordinator:
+    nodeSelector:
+      alluxio.io/worker: {{ .Values.cluster.label }}
+    tolerations:
+      - operator: Exists
+    metastore:
+      hostPath: /mnt/alluxio/master/meta
+    jvmOptions:
+{{ toYaml .Values.cluster.coordinator.jvmOptions | indent 6 }}
+    resources:
+{{ toYaml .Values.cluster.coordinator.resources | indent 6 }}
+        
+  worker:
+    count: {{ .Values.cluster.worker.count }}
+    useExternalId: false
+    systemInfo:
+      type: hostPath
+      hostPath: /mnt/alluxio/system-info
+    log:
+      type: hostPath
+      hostPath: /mnt/alluxio/logs/worker
+    metastore:
+      type: hostPath
+      hostPath: /mnt/alluxio/pagestore/meta
+
+  workerGroups:
+  - worker:
+      nodeSelector:
+        alluxio.io/worker: {{ .Values.cluster.label }}
+      tolerations:
+        - operator: Exists
+      count: {{ .Values.cluster.worker.count }} 
+      pagestore:
+        hostPath: {{ .Values.cluster.worker.pagestorePath }}
+        size: {{ .Values.cluster.worker.pagestoreSize }} 
+      jvmOptions:
+{{ toYaml .Values.cluster.worker.jvmOptions | indent 6 }}
+      resources:
+{{ toYaml .Values.cluster.worker.resources | indent 8 }}
+
+  fuse:
+    tolerations:
+      - operator: Exists
+    type: csi
+    env: {} # 修复原yaml空值问题
+    jvmOptions: ["-Xmx12g", "-Xms4g", "-XX:MaxDirectMemorySize=6g"]
+    resources:
+      limits:
+        cpu: "6"
+        memory: "20Gi"
+      requests:
+        cpu: "2"
+        memory: "4Gi"
+    mountOptions:
+      - allow_other
+      - kernel_cache
+      - entry_timeout=30
+      - attr_timeout=30
+      - local_metadata_cache_size=0
+      - max_background=2048
+      - max_idle_threads=2048

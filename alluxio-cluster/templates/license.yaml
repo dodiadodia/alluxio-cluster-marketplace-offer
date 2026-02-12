@@ -1,0 +1,10 @@
+apiVersion: k8s-operator.alluxio.com/v1
+kind: License
+metadata:
+  name: alluxio-license
+  namespace: {{ .Values.cluster.namespace }}
+spec:
+  clusters:
+  - name: {{ .Values.cluster.name }}
+    namespace: {{ .Values.cluster.namespace }} 
+  licenseString: {{ .Values.cluster.licenseString }} 

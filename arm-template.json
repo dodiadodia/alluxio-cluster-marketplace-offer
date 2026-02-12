@@ -1,0 +1,57 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "extensionResourceName": {
+      "type": "string"
+    },
+    "clusterName": {
+      "type": "string"
+    },
+    "location": {
+      "type": "string"
+    },
+    "workerCount": {
+      "type": "int"
+    },
+    "licenseString": {
+      "type": "securestring"
+    }
+  },
+
+  "variables": {
+    "plan-name": "alluxio-plan",
+    "plan-publisher": "yourpublisherid",
+    "plan-offerID": "alluxio-offer",
+    "releaseTrain": "stable",
+    "clusterExtensionTypeName": "alluxio"
+  },
+
+  "resources": [
+    {
+      "type": "Microsoft.KubernetesConfiguration/extensions",
+      "apiVersion": "2023-05-01",
+      "name": "[parameters('extensionResourceName')]",
+      "location": "[parameters('location')]",
+      "scope": "[concat('Microsoft.ContainerService/managedClusters/', parameters('clusterResourceName'))]",
+      "plan": {
+        "name": "[variables('plan-name')]",
+        "publisher": "[variables('plan-publisher')]",
+        "product": "[variables('plan-offerID')]"
+      },
+      "properties": {
+        "extensionType": "[variables('clusterExtensionTypeName')]",
+        "releaseTrain": "[variables('releaseTrain')]",
+        "autoUpgradeMinorVersion": true,
+        "configurationSettings": {
+          "cluster.name": "[parameters('clusterName')]",
+          "cluster.worker.count": "[parameters('workerCount')]"
+        },
+        "configurationProtectedSettings": {
+          "cluster.licenseString": "[parameters('licenseString')]"
+        }
+      }
+    }
+  ]
+}
+

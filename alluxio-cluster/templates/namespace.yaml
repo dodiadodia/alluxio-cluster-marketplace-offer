@@ -1,0 +1,17 @@
+{{- $targetNs := .Values.cluster.namespace | default .Release.Namespace }}
+
+# 只有当目标 namespace 不等于当前 Release 的 namespace 时，才尝试创建它
+# (因为 Release namespace 会由 helm install --create-namespace 自动创建)
+{{- if ne $targetNs .Release.Namespace }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ $targetNs }}
+  labels:
+    # 加上这个标签，方便管理
+    app.kubernetes.io/managed-by: {{ .Release.Service }}
+  annotations:
+    # [重要] 防止 helm uninstall 时把这个 namespace 删掉 (如果这是个公共空间)
+    # 如果你希望卸载应用时同时也删掉这个 ns，就把下面这行去掉
+    "helm.sh/resource-policy": keep
+{{- end }}
