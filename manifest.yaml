@@ -2,8 +2,8 @@
   "applicationName": "alluxio-cluster-bundle",
   "publisher": "alluxio",
   "version": "1.0.0",
-  "displayName": "Alluxio Enterprise for AKS",
-  "description": "Alluxio Enterprise distributed data platform for Azure Kubernetes Service",
+  "displayName": "Alluxio Enterprise Cluster for AKS",
+  "description": "Alluxio Enterprise Cluster installation for Azure Kubernetes Service",
   "engine": "helm",
   "helmChart": "./alluxio-cluster",
 
@@ -13,7 +13,7 @@
 
   "extensionRegistrationParameters": {
     "defaultScope": "cluster",
-    "namespace": "alluxio",
+    "namespace": "alluxio-test",
     "releaseTrain": "stable"
   }
 }
