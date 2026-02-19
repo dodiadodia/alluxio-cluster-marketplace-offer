@@ -1,5 +1,5 @@
 {
-  "applicationName": "alluxio-cluster-bundle",
+  "applicationName": "alluxio-cluster-extensions",
   "publisher": "alluxio",
   "version": "1.0.0",
   "displayName": "Alluxio Enterprise Cluster for AKS",
