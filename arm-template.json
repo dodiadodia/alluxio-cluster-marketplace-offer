@@ -2,31 +2,36 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "extensionResourceName": {
-      "type": "string"
-    },
-    "clusterName": {
-      "type": "string"
-    },
-    "location": {
-      "type": "string"
-    },
-    "workerCount": {
-      "type": "int"
-    },
-    "licenseString": {
-      "type": "securestring"
-    }
+    "location": { "type": "string" },
+    "clusterResourceName": { "type": "string" },
+    "targetNamespace": { "type": "string" },
+    "extensionResourceName": { "type": "string" },
+    "alluxioClusterName": { "type": "string" },
+    "licenseString": { "type": "securestring" },
+    "imageTag": { "type": "string" },
+    "deploymentProfile": { "type": "string" },
+    "workerCount": { "type": "int" },
+    "etcdPersistenceEnabled": { "type": "bool" },
+    "etcdStorageClass": { "type": "string" },
+    "etcdStorageSize": { "type": "string" },
+    "workerPagestoreSize": { "type": "string" },
+    "coordCpuLimit": { "type": "string" },
+    "coordMemLimit": { "type": "string" },
+    "coordJvmXmx": { "type": "string" },
+    "workerCpuLimit": { "type": "string" },
+    "workerMemLimit": { "type": "string" },
+    "workerJvmXmx": { "type": "string" },
+    "fuseCpuLimit": { "type": "string" },
+    "fuseMemLimit": { "type": "string" },
+    "fuseJvmXmx": { "type": "string" }
   },
-
   "variables": {
-    "plan-name": "alluxio-plan",
-    "plan-publisher": "yourpublisherid",
-    "plan-offerID": "alluxio-offer",
+    "plan-name": "alluxio-cluster",
+    "plan-publisher": "alluxio1770783070184",
+    "plan-offerID": "alluxio_cluster_offer",
     "releaseTrain": "stable",
-    "clusterExtensionTypeName": "alluxio"
+    "clusterExtensionTypeName": "alluxio.alluxio-cluster-extensions"
   },
-
   "resources": [
     {
       "type": "Microsoft.KubernetesConfiguration/extensions",
@@ -43,15 +48,38 @@
         "extensionType": "[variables('clusterExtensionTypeName')]",
         "releaseTrain": "[variables('releaseTrain')]",
         "autoUpgradeMinorVersion": true,
+        "scope": {
+          "cluster": {
+            "releaseNamespace": "[parameters('targetNamespace')]"
+          }
+        },
         "configurationSettings": {
-          "cluster.name": "[parameters('clusterName')]",
-          "cluster.worker.count": "[parameters('workerCount')]"
+          "cluster.name": "[parameters('alluxioClusterName')]",
+          "global.azure.images.enterprise.tag": "[parameters('imageTag')]",
+          
+          "cluster.etcd.persistence.enabled": "[string(parameters('etcdPersistenceEnabled'))]",
+          "cluster.etcd.persistence.storageClass": "[parameters('etcdStorageClass')]",
+          "cluster.etcd.persistence.size": "[parameters('etcdStorageSize')]",
+
+          "cluster.worker.count": "[string(parameters('workerCount'))]",
+          "cluster.worker.pagestoreSize": "[parameters('workerPagestoreSize')]",
+          
+          "cluster.coordinator.resources.cpuLimit": "[parameters('coordCpuLimit')]",
+          "cluster.coordinator.resources.memoryLimit": "[parameters('coordMemLimit')]",
+          "cluster.coordinator.jvm.xmx": "[parameters('coordJvmXmx')]",
+          
+          "cluster.worker.resources.cpuLimit": "[parameters('workerCpuLimit')]",
+          "cluster.worker.resources.memoryLimit": "[parameters('workerMemLimit')]",
+          "cluster.worker.jvm.xmx": "[parameters('workerJvmXmx')]",
+          
+          "cluster.fuse.resources.cpuLimit": "[parameters('fuseCpuLimit')]",
+          "cluster.fuse.resources.memoryLimit": "[parameters('fuseMemLimit')]",
+          "cluster.fuse.jvm.xmx": "[parameters('fuseJvmXmx')]"
         },
         "configurationProtectedSettings": {
-          "cluster.licenseString": "[parameters('licenseString')]"
+          "cluster.properties.licenseString": "[parameters('licenseString')]"
         }
       }
     }
   ]
 }
-
