@@ -8,9 +8,8 @@ spec:
   imageTag: {{ .Values.global.azure.images.enterprise.tag }}
   
   properties:
-    # --- 核心动态参数 ---
-    
-    # --- 固定/默认参数 (如需配置可进一步提取到 values.yaml) ---
+    alluxio.user.fuse.random.access.file.stream.enabled: "true"
+    alluxio.license: {{ .Values.cluster.properties.licenseString | quote }}
 
   user: 0
   group: 0
@@ -18,16 +17,12 @@ spec:
   hostNetwork: true
 
   prometheus:
-    nodeSelector:
-      alluxio.io/worker: {{ .Values.cluster.label }}
     tolerations:
       - operator: Exists
     image: {{ .Values.global.azure.images.prometheus.registry }}/{{ .Values.global.azure.images.prometheus.image }}
     imageTag: {{ .Values.global.azure.images.prometheus.tag }}
   
   grafana:
-    nodeSelector:
-      alluxio.io/worker: {{ .Values.cluster.label }}
     tolerations:
       - operator: Exists
     ports:
@@ -37,11 +32,9 @@ spec:
     imageTag: {{ .Values.global.azure.images.grafana.tag }}
 
   etcd:
-    nodeSelector:
-      alluxio.io/worker: {{ .Values.cluster.label }}
     tolerations:
       - operator: Exists
-    replicaCount: 1
+    replicaCount: {{ .Values.cluster.etcd.replicaCount }}
     image:
       registry: {{ .Values.global.azure.images.etcd.registry }}
       repository: {{ .Values.global.azure.images.etcd.image }}
@@ -52,21 +45,26 @@ spec:
         repository: {{ .Values.global.azure.images.osshell.image }}
         tag: {{ .Values.global.azure.images.osshell.tag }}
     persistence:
-      enabled: false
-      storageClass: openebs-hostpath
-      size: 50Gi
+      enabled: {{ .Values.cluster.etcd.persistence.enabled }}
+      storageClass: {{ .Values.cluster.etcd.persistence.storageClass }}
+      size: {{ .Values.cluster.etcd.persistence.size }}
 
   coordinator:
-    nodeSelector:
-      alluxio.io/worker: {{ .Values.cluster.label }}
     tolerations:
       - operator: Exists
     metastore:
       hostPath: /mnt/alluxio/master/meta
-    jvmOptions:
-{{ toYaml .Values.cluster.coordinator.jvmOptions | indent 6 }}
     resources:
-{{ toYaml .Values.cluster.coordinator.resources | indent 6 }}
+      limits:
+        cpu: {{ .Values.cluster.coordinator.resources.cpuLimit | quote }}
+        memory: {{ .Values.cluster.coordinator.resources.memoryLimit | quote }}
+      requests:
+        cpu: {{ .Values.cluster.coordinator.resources.cpuRequest | quote }}
+        memory: {{ .Values.cluster.coordinator.resources.memoryRequest | quote }}
+    jvmOptions:
+      - "-Xmx{{ .Values.cluster.coordinator.jvm.xmx }}"
+      - "-Xms{{ .Values.cluster.coordinator.jvm.xms }}"
+      - "-XX:MaxDirectMemorySize={{ .Values.cluster.coordinator.jvm.maxDirect }}"
         
   worker:
     count: {{ .Values.cluster.worker.count }}
@@ -83,32 +81,40 @@ spec:
 
   workerGroups:
   - worker:
-      nodeSelector:
-        alluxio.io/worker: {{ .Values.cluster.label }}
       tolerations:
         - operator: Exists
       count: {{ .Values.cluster.worker.count }} 
       pagestore:
         hostPath: {{ .Values.cluster.worker.pagestorePath }}
         size: {{ .Values.cluster.worker.pagestoreSize }} 
-      jvmOptions:
-{{ toYaml .Values.cluster.worker.jvmOptions | indent 6 }}
       resources:
-{{ toYaml .Values.cluster.worker.resources | indent 8 }}
+        limits:
+          cpu: {{ .Values.cluster.worker.resources.cpuLimit | quote }}
+          memory: {{ .Values.cluster.worker.resources.memoryLimit | quote }}
+        requests:
+          cpu: {{ .Values.cluster.worker.resources.cpuRequest | quote }}
+          memory: {{ .Values.cluster.worker.resources.memoryRequest | quote }}
+      jvmOptions:
+        - "-Xmx{{ .Values.cluster.worker.jvm.xmx }}"
+        - "-Xms{{ .Values.cluster.worker.jvm.xms }}"
+        - "-XX:MaxDirectMemorySize={{ .Values.cluster.worker.jvm.maxDirect }}"
 
   fuse:
     tolerations:
       - operator: Exists
     type: csi
-    env: {} # 修复原yaml空值问题
-    jvmOptions: ["-Xmx12g", "-Xms4g", "-XX:MaxDirectMemorySize=6g"]
+    env: {} 
     resources:
       limits:
-        cpu: "6"
-        memory: "20Gi"
+        cpu: {{ .Values.cluster.fuse.resources.cpuLimit | quote }}
+        memory: {{ .Values.cluster.fuse.resources.memoryLimit | quote }}
       requests:
-        cpu: "2"
-        memory: "4Gi"
+        cpu: {{ .Values.cluster.fuse.resources.cpuRequest | quote }}
+        memory: {{ .Values.cluster.fuse.resources.memoryRequest | quote }}
+    jvmOptions: 
+      - "-Xmx{{ .Values.cluster.fuse.jvm.xmx }}"
+      - "-Xms{{ .Values.cluster.fuse.jvm.xms }}"
+      - "-XX:MaxDirectMemorySize={{ .Values.cluster.fuse.jvm.maxDirect }}"
     mountOptions:
       - allow_other
       - kernel_cache
