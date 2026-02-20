@@ -36,14 +36,14 @@ spec:
       - operator: Exists
     replicaCount: {{ .Values.cluster.etcd.replicaCount }}
     image:
-      registry: {{ .Values.global.azure.images.etcd.registry }}
-      repository: {{ .Values.global.azure.images.etcd.image }}
-      tag: {{ .Values.global.azure.images.etcd.tag }}
+      registry: alluxio.azurecr.io/alluxio
+      repository: etcd
+      tag: 3.5.9-debian-11-r24
     volumePermissions:
       image:
-        registry: {{ .Values.global.azure.images.osshell.registry }}
-        repository: {{ .Values.global.azure.images.osshell.image }}
-        tag: {{ .Values.global.azure.images.osshell.tag }}
+        registry: alluxio.azurecr.io/alluxio
+        repository: os-shell
+        tag: 11-debian-11-r2
     persistence:
       enabled: {{ .Values.cluster.etcd.persistence.enabled }}
       storageClass: {{ .Values.cluster.etcd.persistence.storageClass }}

@@ -5,23 +5,15 @@ global:
   azure:
     images:
       enterprise:
-        tag: AI-3.7-13.0.29
+        tag: AI-3.7-13.0.29-azure
         image: alluxio-enterprise
-        registry: alluxio.azurecr.io/alluxio
-      etcd:
-        tag: 3.5.9-debian-11-r24
-        image: etcd
-        registry: alluxio.azurecr.io/alluxio
-      osshell:
-        tag: 11-debian-11-r2
-        image: os-shell
         registry: alluxio.azurecr.io/alluxio
       prometheus:
         tag: v2.52.0
         image: prometheus
         registry: alluxio.azurecr.io/alluxio
       grafana:
-        tag: 11.1.0-ubuntu
+        tag: 11.1.13-ubuntu
         image: grafana 
         registry: alluxio.azurecr.io/alluxio
 
