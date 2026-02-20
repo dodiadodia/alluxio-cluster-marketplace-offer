@@ -19,8 +19,8 @@ spec:
   prometheus:
     tolerations:
       - operator: Exists
-    image: {{ .Values.global.azure.images.prometheus.registry }}/{{ .Values.global.azure.images.prometheus.image }}
-    imageTag: {{ .Values.global.azure.images.prometheus.tag }}
+    image: alluxio.azurecr.io/alluxio/prometheus
+    imageTag: v2.52.0
   
   grafana:
     tolerations:
