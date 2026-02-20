@@ -1,7 +1,7 @@
 {
   "applicationName": "alluxio-cluster-extensions",
   "publisher": "alluxio",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "displayName": "Alluxio Enterprise Cluster for AKS",
   "description": "Alluxio Enterprise Cluster installation for Azure Kubernetes Service",
   "engine": "helm",
