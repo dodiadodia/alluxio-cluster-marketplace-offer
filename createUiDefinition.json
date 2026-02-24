@@ -172,6 +172,7 @@
             "name": "etcdPersistenceEnabled",
             "type": "Microsoft.Common.CheckBox",
             "label": "If etcd Persistence enabled, you must select Storage Class below",
+            "defaultValue": true,
             "visible": "[equals(steps('alluxioConfig').deploymentProfile, 'custom')]"
           },
           {
