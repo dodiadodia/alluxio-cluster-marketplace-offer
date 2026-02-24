@@ -3,6 +3,7 @@
 # =======================================================================
 global:
   azure:
+    images:
       grafana:
         tag: 11.1.13-ubuntu
         image: grafana 
