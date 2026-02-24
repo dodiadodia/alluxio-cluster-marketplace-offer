@@ -11,6 +11,7 @@
     "imageTag": { "type": "string" },
     "deploymentProfile": { "type": "string" },
     "workerCount": { "type": "int" },
+    "etcdReplicaCount": { "type": "int" },
     "etcdPersistenceEnabled": { "type": "bool" },
     "etcdStorageClass": { "type": "string" },
     "etcdStorageSize": { "type": "string" },
@@ -57,6 +58,7 @@
           "cluster.name": "[parameters('alluxioClusterName')]",
           "cluster.image.tag": "[parameters('imageTag')]",
           
+          "cluster.etcd.replicaCount": "[string(parameters('etcdReplicaCount'))]",
           "cluster.etcd.persistence.enabled": "[string(parameters('etcdPersistenceEnabled'))]",
           "cluster.etcd.persistence.storageClass": "[parameters('etcdStorageClass')]",
           "cluster.etcd.persistence.size": "[parameters('etcdStorageSize')]",

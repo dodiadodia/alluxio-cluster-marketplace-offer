@@ -4,7 +4,7 @@ metadata:
   name: {{ .Values.cluster.name }}
   namespace: {{ .Release.Namespace }}
 spec:
-  image: {{ .Values.cluster.image.url }}
+  image: alluxio.azurecr.io/alluxio/alluxio-enterprise
   imageTag: {{ .Values.cluster.image.tag }}
   
   properties:

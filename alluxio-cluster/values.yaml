@@ -15,15 +15,14 @@ global:
 cluster:
   name: rds
   image:
-    url: alluxio.azurecr.io/alluxio/alluxio-enterprise
-    tag: AI-3.7-13.0.29
+    tag: AI-3.7
     pullPolicy: IfNotPresent
   
   properties:
     licenseString: "eyJsaWNlbnNlSWQiOiJzNTY1Nm9vanlrbzc4dWR1IiwicHJvZHVjdGlvbklkIjoiaW50ZXJuYWwiLCJleHBpcmF0aW9uRGF0ZSI6IjIwMjYtMDItMjhUMDA6MDA6MDBaIiwibGljZW5zZVZlcnNpb24iOjEsInNlY3JldCI6IitibkQvMHd0ZDM3NnFYNDJybTRwQmJ0dS9BdzhrTEh4ZnpwVVVEeGo4VkpQeXc4bUtDQVU5TGtSTmgyY3g5RTEiLCJjb25zdHJhaW50cyI6eyJwZXJQcm9jZXNzIjp7fSwicmVnaXN0cmF0aW9uIjp7Im1heFByb2Nlc3NDb3VudCI6MTAwfX0sImJvdW5kQ2x1c3RlciI6IiJ9" # 保持你的原有值，此处省略过长字符
 
   etcd:
-    replicaCount: 1
+    replicaCount: 3
     persistence:
       enabled: false
       storageClass: managed-csi

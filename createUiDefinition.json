@@ -160,6 +160,15 @@
             "visible": "[equals(steps('alluxioConfig').deploymentProfile, 'custom')]"
           },
           {
+            "name": "etcdReplicaCount",
+            "type": "Microsoft.Common.Slider",
+            "label": "Etcd Replica Count",
+            "min": 1,
+            "max": 7,
+            "defaultValue": 3,
+            "visible": "[equals(steps('alluxioConfig').deploymentProfile, 'custom')]"
+          },
+          {
             "name": "etcdPersistenceEnabled",
             "type": "Microsoft.Common.CheckBox",
             "label": "If etcd Persistence enabled, you must select Storage Class below",
@@ -170,14 +179,14 @@
             "type": "Microsoft.Common.TextBox",
             "label": "Etcd Storage Class",
             "defaultValue": "managed-csi",
-            "visible": "[equals(steps('alluxioConfig').deploymentProfile, 'custom')]"
+            "visible": "[and(equals(steps('alluxioConfig').deploymentProfile, 'custom'), steps('advancedConfig').etcdPersistenceEnabled)]"
           },
           {
             "name": "etcdStorageSize",
             "type": "Microsoft.Common.TextBox",
             "label": "Etcd Storage Size",
             "defaultValue": "50Gi",
-            "visible": "[equals(steps('alluxioConfig').deploymentProfile, 'custom')]"
+            "visible": "[and(equals(steps('alluxioConfig').deploymentProfile, 'custom'), steps('advancedConfig').etcdPersistenceEnabled)]"
           },
           {
             "name": "workerPagestoreSize",
@@ -262,6 +271,7 @@
       "imageTag": "[steps('alluxioConfig').imageTag]",
       "deploymentProfile": "[steps('alluxioConfig').deploymentProfile]",
       "workerCount": "[steps('advancedConfig').workerCount]",
+      "etcdReplicaCount": "[steps('advancedConfig').etcdReplicaCount]",
       "etcdPersistenceEnabled": "[steps('advancedConfig').etcdPersistenceEnabled]",
       "etcdStorageClass": "[steps('advancedConfig').etcdStorageClass]",
       "etcdStorageSize": "[steps('advancedConfig').etcdStorageSize]",
