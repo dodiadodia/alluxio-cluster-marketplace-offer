@@ -3,11 +3,6 @@
 # =======================================================================
 global:
   azure:
-    images:
-      enterprise:
-        tag: AI-3.7-13.0.29-marketplace
-        image: alluxio-enterprise
-        registry: alluxio.azurecr.io/alluxio
       grafana:
         tag: 11.1.13-ubuntu
         image: grafana 
@@ -19,6 +14,8 @@ global:
 cluster:
   name: rds
   image:
+    url: alluxio.azurecr.io/alluxio/alluxio-enterprise
+    tag: AI-3.7-13.0.29
     pullPolicy: IfNotPresent
   
   properties:

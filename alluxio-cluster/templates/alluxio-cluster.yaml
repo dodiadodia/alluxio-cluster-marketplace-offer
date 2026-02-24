@@ -4,8 +4,8 @@ metadata:
   name: {{ .Values.cluster.name }}
   namespace: {{ .Release.Namespace }}
 spec:
-  image: {{ .Values.global.azure.images.enterprise.registry }}/{{ .Values.global.azure.images.enterprise.image }}
-  imageTag: {{ .Values.global.azure.images.enterprise.tag }}
+  image: {{ .Values.cluster.image.url }}
+  imageTag: {{ .Values.cluster.image.tag }}
   
   properties:
     alluxio.user.fuse.random.access.file.stream.enabled: "true"

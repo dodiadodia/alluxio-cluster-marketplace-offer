@@ -55,7 +55,7 @@
         },
         "configurationSettings": {
           "cluster.name": "[parameters('alluxioClusterName')]",
-          "global.azure.images.enterprise.tag": "[parameters('imageTag')]",
+          "cluster.image.tag": "[parameters('imageTag')]",
           
           "cluster.etcd.persistence.enabled": "[string(parameters('etcdPersistenceEnabled'))]",
           "cluster.etcd.persistence.storageClass": "[parameters('etcdStorageClass')]",
